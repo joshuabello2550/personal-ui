@@ -1,5 +1,10 @@
 {
   "dependencies": {
-    "chrome-types": "^0.1.415"
+    "@langchain/core": "^1.1.19",
+    "chrome-types": "^0.1.415",
+    "langchain": "^1.2.17"
+  },
+  "devDependencies": {
+    "shadcn": "^3.8.3"
   }
 }
