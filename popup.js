@@ -11,14 +11,27 @@ const handleUIRequest = async () => {
 
   const tabId = (await getCurrentTab()).id;
 
-  const html = await getPageHTML(tabId);
-  console.log("html: ", html);
+  const pageHTML = await getPageHTML(tabId);
+  console.log("html: ", pageHTML);
 
-  addChanges(tabId);
+  const pageCSS = await getPageCSS(tabId);
+  console.log("pageCSS: ", pageCSS);
+
+  const newCSS = getInsertCSS(pageHTML, pageCSS, messageText);
+
+  console.log("newCSS: ", newCSS);
+  addChanges(tabId, newCSS);
+
   if (messageText) {
     // Clear the input field
     messageInput.value = "";
   }
+};
+
+const getCurrentTab = async () => {
+  let queryOptions = { active: true, lastFocusedWindow: true };
+  let [tab] = await chrome.tabs.query(queryOptions);
+  return tab;
 };
 
 const getPageHTML = (tabId) => {
@@ -35,19 +48,41 @@ const getPageHTML = (tabId) => {
   });
 };
 
-const getCurrentTab = async () => {
-  let queryOptions = { active: true, lastFocusedWindow: true };
-  let [tab] = await chrome.tabs.query(queryOptions);
-  return tab;
+const getPageCSS = (tabId) => {
+  return new Promise((resolve) => {
+    chrome.scripting.executeScript(
+      {
+        target: { tabId },
+        files: ["getPageCSS.js"],
+      },
+      (results) => {
+        resolve(results[0].result);
+      }
+    );
+  });
 };
 
-const insertCSS = `
-  #masthead-container.ytd-app{
-    top: 20px !important;
-  }
-`;
+const getInsertCSS = (pageHTML, pageCSS, messageText) => {
+  return new Promise((resolve) => {
+    chrome.scripting.executeScript(
+      {
+        target: { tabId },
+        files: ["agent.js"],
+      },
+      (results) => {
+        resolve(results[0].result);
+      }
+    );
+  });
+};
 
-const addChanges = (tabId) => {
+// const insertCSS = `
+//   #masthead-container.ytd-app{
+//     top: 20px !important;
+//   }
+// `;
+
+const addChanges = (tabId, insertCSS) => {
   chrome.scripting.insertCSS({
     target: { tabId: tabId },
     // files: ["content-script.js"],
