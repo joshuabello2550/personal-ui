@@ -1,4 +1,4 @@
-import { getElementsCSS } from "./getPageCS.js";
+import { getElementsCSS } from "./getPageCSS.js";
 import { agentFunction } from "./agent.js";
 
 const chatForm = document.getElementById("chatForm");
