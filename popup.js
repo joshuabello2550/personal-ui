@@ -1,3 +1,6 @@
+import { getElementsCSS } from "./getPageCSS.js";
+import { agentFunction } from "./agent.js";
+
 const chatForm = document.getElementById("chatForm");
 const messageInput = document.getElementById("messageInput");
 
@@ -17,8 +20,7 @@ const handleUIRequest = async () => {
   const pageCSS = await getPageCSS(tabId);
   console.log("pageCSS: ", pageCSS);
 
-  const newCSS = getInsertCSS(pageHTML, pageCSS, messageText);
-
+  const newCSS = await getInsertCSS(pageHTML, pageCSS, messageText, tabId);
   console.log("newCSS: ", newCSS);
   addChanges(tabId, newCSS);
 
@@ -53,7 +55,7 @@ const getPageCSS = (tabId) => {
     chrome.scripting.executeScript(
       {
         target: { tabId },
-        files: ["getPageCSS.js"],
+        func: getElementsCSS,
       },
       (results) => {
         resolve(results[0].result);
@@ -62,12 +64,13 @@ const getPageCSS = (tabId) => {
   });
 };
 
-const getInsertCSS = (pageHTML, pageCSS, messageText) => {
+const getInsertCSS = (pageHTML, pageCSS, messageText, tabId) => {
   return new Promise((resolve) => {
     chrome.scripting.executeScript(
       {
         target: { tabId },
-        files: ["agent.js"],
+        func: agentFunction,
+        args: [pageHTML, pageCSS, messageText],
       },
       (results) => {
         resolve(results[0].result);

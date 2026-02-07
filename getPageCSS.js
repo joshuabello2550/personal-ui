@@ -47,7 +47,7 @@ const summarizeElement = (el) => {
   };
 };
 
-const getElementsCSS = () => {
+export const getElementsCSS = () => {
   const candidates = Array.from(document.querySelectorAll(CANDIDATE_SELECTOR));
   const scopedElements = [];
   for (const el of candidates) {
@@ -65,5 +65,3 @@ const getElementsCSS = () => {
 
   return result;
 };
-
-getElementsCSS();
