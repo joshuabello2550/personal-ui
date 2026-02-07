@@ -1,4 +1,4 @@
-import { getElementsCSS } from "./getPageCSS.js";
+import { getElementsCSS } from "./getpageCSS.js";
 import { agentFunction } from "./agent.js";
 
 const chatForm = document.getElementById("chatForm");
@@ -15,13 +15,11 @@ const handleUIRequest = async () => {
   const tabId = (await getCurrentTab()).id;
 
   const pageHTML = await getPageHTML(tabId);
-  console.log("html: ", pageHTML);
 
   const pageCSS = await getPageCSS(tabId);
-  console.log("pageCSS: ", pageCSS);
 
   const newCSS = await getInsertCSS(pageHTML, pageCSS, messageText, tabId);
-  console.log("newCSS: ", newCSS);
+
   addChanges(tabId, newCSS);
 
   if (messageText) {
@@ -91,5 +89,4 @@ const addChanges = (tabId, insertCSS) => {
     // files: ["content-script.js"],
     css: insertCSS,
   });
-  console.log("Changes added");
 };
